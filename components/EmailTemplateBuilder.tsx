@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { EmailTemplate, TemplateComponent, ComponentItem } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
@@ -9,35 +9,58 @@ import ComponentList from "./template/ComponentList";
 import ComponentRenderer from "./template/ComponentRenderer";
 import TemplateList from "./template/TemplateList";
 import { useDragAndDrop } from "@/hooks/use-drag-and-drop";
+import { useRouter } from "next/navigation";
 import {
   createTemplate,
   getDefaultTemplateContent,
   removeComponentFromTemplate,
   updateComponentInTemplate,
+  saveTemplatesToStorage,
+  getTemplatesFromStorage,
 } from "@/lib/template-utils";
 
 // Main component
 const EmailTemplateBuilder: React.FC = () => {
   const { toast } = useToast();
-  const [templates, setTemplates] = useState<EmailTemplate[]>([
-    {
-      id: 1,
-      name: "Welcome Email",
-      subject: "Welcome to Our Service!",
-      content: [],
-    },
-    {
-      id: 2,
-      name: "Password Reset",
-      subject: "Reset Your Password",
-      content: [],
-    },
-  ]);
+  const router = useRouter();
+  const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [activeTemplate, setActiveTemplate] = useState<EmailTemplate | null>(
     null
   );
   const [showTemplateList, setShowTemplateList] = useState<boolean>(true);
+
+  // Load templates from local storage on component mount
+  useEffect(() => {
+    const storedTemplates = getTemplatesFromStorage();
+
+    if (storedTemplates.length > 0) {
+      setTemplates(storedTemplates);
+    } else {
+      // Initialize with default templates if none exist
+      const defaultTemplates = [
+        {
+          id: 1,
+          name: "Welcome Email",
+          subject: "Welcome to Our Service!",
+          content: getDefaultTemplateContent(),
+        },
+        {
+          id: 2,
+          name: "Password Reset",
+          subject: "Reset Your Password",
+          content: getDefaultTemplateContent(),
+        },
+      ];
+
+      setTemplates(defaultTemplates);
+      saveTemplatesToStorage(defaultTemplates);
+    }
+
+    // Always show the template list when the component is mounted
+    setShowTemplateList(true);
+    setActiveTemplate(null);
+  }, []);
 
   // Available components for the builder
   const components: ComponentItem[] = [
@@ -53,7 +76,6 @@ const EmailTemplateBuilder: React.FC = () => {
   const {
     draggedItem,
     dragOverIndex,
-    draggedComponentType,
     handleComponentDragStart,
     handleDragStart,
     handleDragOver,
@@ -80,8 +102,13 @@ const EmailTemplateBuilder: React.FC = () => {
   // Create a new template
   const handleCreateTemplate = (): void => {
     const newTemplate = createTemplate();
-    setTemplates([...templates, newTemplate]);
-    selectTemplate(newTemplate);
+    const updatedTemplates = [...templates, newTemplate];
+
+    setTemplates(updatedTemplates);
+    saveTemplatesToStorage(updatedTemplates);
+
+    // Redirect to the template creation page with the new template ID
+    router.push(`/create/${newTemplate.id}`);
   };
 
   // Remove component from the template
@@ -103,11 +130,12 @@ const EmailTemplateBuilder: React.FC = () => {
   const saveTemplate = (): void => {
     if (!activeTemplate) return;
 
-    setTemplates(
-      templates.map((template) =>
-        template.id === activeTemplate.id ? activeTemplate : template
-      )
+    const updatedTemplates = templates.map((template) =>
+      template.id === activeTemplate.id ? activeTemplate : template
     );
+
+    setTemplates(updatedTemplates);
+    saveTemplatesToStorage(updatedTemplates);
   };
 
   // Send test email
@@ -216,7 +244,11 @@ const EmailTemplateBuilder: React.FC = () => {
             altText="Yes, delete this template"
             onClick={() => {
               // Remove the template from the templates array
-              setTemplates(templates.filter((template) => template.id !== id));
+              const updatedTemplates = templates.filter(
+                (template) => template.id !== id
+              );
+              setTemplates(updatedTemplates);
+              saveTemplatesToStorage(updatedTemplates);
 
               // If the active template is being deleted, go back to template list
               if (activeTemplate && activeTemplate.id === id) {

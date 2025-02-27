@@ -59,7 +59,12 @@ export default function Header({
 
   return (
     <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-      <h1 className="text-xl font-semibold">Email Template Builder</h1>
+      <div className="flex items-center">
+        <h1 className="text-xl font-semibold">Email Template Builder</h1>
+        {!showTemplateList && activeTemplate && (
+          <span className="ml-2 text-gray-500"> / {activeTemplate.name}</span>
+        )}
+      </div>
       {!showTemplateList && activeTemplate && (
         <div className="flex gap-2">
           <button
