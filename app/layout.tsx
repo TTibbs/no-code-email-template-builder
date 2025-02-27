@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import GlobalHeader from "@/components/GlobalHeader";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
           <main className="flex-1 flex flex-col">{children}</main>
           <Toaster />
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
