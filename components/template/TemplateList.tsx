@@ -13,18 +13,6 @@ const TemplateList: React.FC<TemplateListProps> = ({
   return (
     <div className="p-6 bg-gray-50 flex-1">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-medium">Your Email Templates</h2>
-          <Button
-            variant="outline"
-            className="cursor-pointer"
-            onClick={onCreateTemplate}
-          >
-            <Plus size={16} />
-            New Template
-          </Button>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {templates.map((template: EmailTemplate) => (
             <div

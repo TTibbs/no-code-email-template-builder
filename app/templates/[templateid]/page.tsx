@@ -5,19 +5,18 @@ import { useParams, useRouter } from "next/navigation";
 import { EmailTemplate, TemplateComponent, ComponentItem } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import {
-  createTemplate,
-  getDefaultTemplateContent,
   removeComponentFromTemplate,
   updateComponentInTemplate,
   getTemplateById,
   saveTemplateToStorage,
+  createTemplate,
 } from "@/lib/template-utils";
 import ComponentList from "@/components/template/ComponentList";
 import ComponentRenderer from "@/components/template/ComponentRenderer";
 import { useDragAndDrop } from "@/hooks/use-drag-and-drop";
 import { Save, Send, Copy } from "lucide-react";
 
-export default function TemplateCreatePage() {
+export default function TemplatePage() {
   const params = useParams();
   const router = useRouter();
   const { toast } = useToast();
@@ -76,16 +75,13 @@ export default function TemplateCreatePage() {
         // Template exists, use it
         setActiveTemplate(template);
       } else {
-        // Template doesn't exist, create a new one
-        const newTemplate: EmailTemplate = {
-          id: id,
-          name: "New Template",
-          subject: "New Subject",
-          content: getDefaultTemplateContent(),
-        };
-
-        setActiveTemplate(newTemplate);
-        saveTemplateToStorage(newTemplate);
+        // Template doesn't exist, redirect to home
+        toast({
+          title: "Error",
+          description: "Template not found",
+          variant: "destructive",
+        });
+        router.push("/");
       }
     } catch (error) {
       console.error("Error loading template:", error);
@@ -130,9 +126,6 @@ export default function TemplateCreatePage() {
       title: "Success",
       description: "Template saved successfully",
     });
-
-    // Optionally redirect to the template page after saving
-    router.push(`/templates/${activeTemplate.id}`);
   };
 
   // Send test email
@@ -248,7 +241,7 @@ export default function TemplateCreatePage() {
     });
 
     // Navigate to the new template
-    router.push(`/templates/${newTemplate.id}`);
+    router.push(`/template/${newTemplate.id}`);
   };
 
   if (!activeTemplate) {

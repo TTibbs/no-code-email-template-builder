@@ -1,7 +1,8 @@
 import { EmailTemplate } from "@/types";
-import { Send, Save, FileText } from "lucide-react";
+import { Send, Save, FileText, Grid } from "lucide-react";
 import React, { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   templates: EmailTemplate[];
@@ -20,6 +21,7 @@ export default function Header({
   onShowTemplateList,
 }: HeaderProps) {
   const { toast } = useToast();
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handleSaveTemplate = () => {
@@ -57,6 +59,10 @@ export default function Header({
     }
   };
 
+  const handleViewAllTemplates = () => {
+    router.push("/templates");
+  };
+
   return (
     <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
       <div className="flex items-center">
@@ -73,6 +79,13 @@ export default function Header({
           >
             <FileText size={16} />
             Templates
+          </button>
+          <button
+            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
+            onClick={handleViewAllTemplates}
+          >
+            <Grid size={16} />
+            View All
           </button>
           <button
             className="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
