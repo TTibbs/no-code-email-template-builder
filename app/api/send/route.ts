@@ -1,4 +1,3 @@
-// app/api/send/route.ts
 import { NextRequest } from "next/server";
 import { Resend } from "resend";
 import { renderEmail } from "@/lib/renderEmailTemplate.server";

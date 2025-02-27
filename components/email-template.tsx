@@ -1,4 +1,3 @@
-// email-template.tsx
 import * as React from "react";
 import { TemplateComponent } from "@/types";
 

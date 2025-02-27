@@ -7,14 +7,13 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
-  Save,
-  FileText,
-  Send,
   X,
 } from "lucide-react";
 import { EmailTemplate, TemplateComponent, ComponentItem } from "@/types";
 import { Button } from "./ui/button";
 import { useToast } from "@/hooks/use-toast";
+import Header from "./Header";
+import { ToastAction } from "@/components/ui/toast";
 
 // Main component
 const EmailTemplateBuilder: React.FC = () => {
@@ -284,11 +283,12 @@ const EmailTemplateBuilder: React.FC = () => {
         template.id === activeTemplate.id ? activeTemplate : template
       )
     );
-    alert("Template saved successfully!");
+
+    // Toast notification is now handled in the Header component
   };
 
   // Send test email
-  const sendTestEmail = async () => {
+  const sendTestEmail = async (): Promise<void> => {
     if (!activeTemplate) {
       toast({
         title: "Error",
@@ -335,6 +335,7 @@ const EmailTemplateBuilder: React.FC = () => {
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
+      throw error;
     } finally {
       setIsSubmitting(false);
     }
@@ -515,45 +516,65 @@ const EmailTemplateBuilder: React.FC = () => {
 
   // Delete template
   const deleteTemplate = (id: number, e: React.MouseEvent): void => {
-    e.stopPropagation();
-    if (confirm("Are you sure you want to delete this template?")) {
-      setTemplates(templates.filter((template) => template.id !== id));
-    }
+    e.stopPropagation(); // Prevent template selection when clicking delete
+
+    const { dismiss } = toast({
+      title: "Delete Template",
+      description: "Are you sure you want to delete this template?",
+      duration: 5000, // Show for 5 seconds
+      action: (
+        <>
+          <ToastAction
+            altText="Yes, delete this template"
+            onClick={() => {
+              // Remove the template from the templates array
+              setTemplates(templates.filter((template) => template.id !== id));
+
+              // If the active template is being deleted, go back to template list
+              if (activeTemplate && activeTemplate.id === id) {
+                setActiveTemplate(null);
+                setShowTemplateList(true);
+              }
+
+              // Dismiss the toast
+              dismiss();
+
+              // Show success toast
+              toast({
+                title: "Success",
+                description: "Template deleted successfully",
+                duration: 3000, // Show for 3 seconds
+              });
+            }}
+          >
+            Yes
+          </ToastAction>
+          <ToastAction
+            altText="Don't delete"
+            onClick={() => {
+              // Just dismiss the toast without deleting
+              dismiss();
+            }}
+          >
+            No
+          </ToastAction>
+        </>
+      ),
+    });
   };
 
   // Main render
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-        <h1 className="text-xl font-semibold">Email Template Builder</h1>
-        {!showTemplateList && activeTemplate && (
-          <div className="flex gap-2">
-            <button
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
-              onClick={() => setShowTemplateList(true)}
-            >
-              <FileText size={16} />
-              Templates
-            </button>
-            <button
-              className="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
-              onClick={sendTestEmail}
-              disabled={isSubmitting}
-            >
-              <Send size={16} />
-              {isSubmitting ? "Sending..." : "Send Test"}
-            </button>
-            <button
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
-              onClick={saveTemplate}
-            >
-              <Save size={16} />
-              Save
-            </button>
-          </div>
-        )}
-      </div>
+      <Header
+        templates={templates}
+        activeTemplate={activeTemplate}
+        showTemplateList={showTemplateList}
+        onSaveTemplate={saveTemplate}
+        onSendTestEmail={sendTestEmail}
+        onShowTemplateList={() => setShowTemplateList(true)}
+      />
 
       {/* Main Content */}
       {showTemplateList ? (
