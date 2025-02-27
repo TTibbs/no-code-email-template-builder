@@ -2,19 +2,22 @@
 
 import React from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, List, Plus } from "lucide-react";
+import { Home, List, Plus, User, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 const GlobalHeader: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const { user, logout } = useAuth();
 
   // Determine the current page
   const isHomePage = pathname === "/";
-  const isTemplatesPage = pathname === "/template";
+  const isTemplatesPage = pathname === "/templates";
   const isTemplatePage =
-    pathname.startsWith("/template/") && pathname !== "/template";
+    pathname.startsWith("/templates/") && pathname !== "/templates";
   const isCreatePage = pathname.startsWith("/create/");
+  const isProfilePage = pathname.startsWith("/profile");
 
   // Get the page title based on the current route
   const getPageTitle = () => {
@@ -22,6 +25,7 @@ const GlobalHeader: React.FC = () => {
     if (isTemplatesPage) return "Your Email Templates";
     if (isTemplatePage) return "Edit Template";
     if (isCreatePage) return "Create New Template";
+    if (isProfilePage) return "User Profile";
     return "Email Template Builder";
   };
 
@@ -33,6 +37,11 @@ const GlobalHeader: React.FC = () => {
             <h1 className="text-xl font-semibold text-gray-900">
               {getPageTitle()}
             </h1>
+            {user && (
+              <span className="ml-2 text-sm text-gray-500">
+                Logged in as {user.name}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center space-x-2">
@@ -54,13 +63,40 @@ const GlobalHeader: React.FC = () => {
               <List size={20} />
             </Button>
 
+            {/* Profile button */}
+            <Button
+              onClick={() => router.push("/profile")}
+              className="p-2 rounded-md bg-white text-zinc-800 hover:bg-zinc-200 cursor-pointer"
+              title={user ? `Profile: ${user.name}` : "Profile"}
+            >
+              <User size={20} />
+              {user && (
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-white"></span>
+              )}
+            </Button>
+
+            {/* Logout button (only shown when user is logged in) */}
+            {user && (
+              <Button
+                onClick={logout}
+                className="p-2 rounded-md bg-white text-zinc-800 hover:bg-zinc-200 cursor-pointer"
+                title="Logout"
+              >
+                <LogOut size={20} />
+              </Button>
+            )}
+
             {/* Create new template button */}
             <Button
               onClick={() => {
                 const newTemplateId = Date.now();
                 router.push(`/create/${newTemplateId}`);
               }}
-              className="ml-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-sm font-medium flex items-center gap-1 cursor-pointer"
+              className={`ml-2 px-4 py-2 ${
+                isCreatePage
+                  ? "bg-emerald-700 hover:bg-emerald-800"
+                  : "bg-emerald-600 hover:bg-emerald-700"
+              } text-white rounded-md text-sm font-medium flex items-center gap-1 cursor-pointer`}
               title="Create New Template"
             >
               <Plus size={16} />

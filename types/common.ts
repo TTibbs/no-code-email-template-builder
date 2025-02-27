@@ -20,3 +20,15 @@ export type EmailTemplate = {
   subject: string;
   content: TemplateComponent[];
 };
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  role: "admin" | "user";
+  createdAt: string;
+  preferences?: {
+    theme?: "light" | "dark";
+    emailNotifications?: boolean;
+  };
+};

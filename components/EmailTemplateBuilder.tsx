@@ -22,7 +22,6 @@ const EmailTemplateBuilder: React.FC = () => {
   const { toast } = useToast();
   const router = useRouter();
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [activeTemplate, setActiveTemplate] = useState<EmailTemplate | null>(
     null
   );

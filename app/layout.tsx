@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import GlobalHeader from "@/components/GlobalHeader";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,9 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} min-h-screen flex flex-col`}>
-        <GlobalHeader />
-        <main className="flex-1 flex flex-col">{children}</main>
-        <Toaster />
+        <AuthProvider>
+          <GlobalHeader />
+          <main className="flex-1 flex flex-col">{children}</main>
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

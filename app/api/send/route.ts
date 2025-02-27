@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
     console.log("Sending email with data:", { name, subject, content });
 
     const { data, error } = await resend.emails.send({
-      from: "ByteWard Solutions <no-reply@bytewardsolutions.co.uk>",
-      to: ["terry.ward@bytewardsolutions.co.uk"],
+      from: "place your from email here (no reply address)",
+      to: ["place your to email here"],
       subject,
       html,
     });
