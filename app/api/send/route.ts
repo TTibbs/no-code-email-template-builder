@@ -30,11 +30,73 @@ export async function POST(request: NextRequest) {
 
     console.log("Sending email with data:", { name, subject, content });
 
+    // Extract image data to create attachments with Content-IDs for inline embedding
+    const attachments: any[] = [];
+
+    // First pass: Process images and generate CIDs
+    const processedContent = content.map((component: TemplateComponent) => {
+      if (component.type === "image" && component.src) {
+        // Create a clean unique Content-ID for this image
+        const contentId = `image-${component.id}`;
+
+        // If it's a data URI
+        if (component.src.startsWith("data:image")) {
+          const matches = component.src.match(
+            /^data:image\/(\w+);base64,(.+)$/
+          );
+          if (matches && matches.length === 3) {
+            const imageType = matches[1];
+            const base64Data = matches[2];
+
+            // Add to attachments with Content-ID
+            attachments.push({
+              filename: `image-${component.id}.${imageType}`,
+              content: base64Data,
+              encoding: "base64",
+              contentType: `image/${imageType}`,
+              disposition: "inline",
+              contentId, // Simplified Content-ID format
+            });
+
+            // Update the component to use the CID reference - critical for correct inline display
+            return {
+              ...component,
+              originalSrc: component.src,
+              src: `cid:${contentId}`,
+            };
+          }
+        }
+        // If it's an external URL, we'll keep it as is
+        else if (
+          component.src.startsWith("http://") ||
+          component.src.startsWith("https://")
+        ) {
+          return component;
+        }
+      }
+      return component;
+    });
+
+    // Use the processed content with CID references for rendering
+    const updatedHtml = await renderEmail(
+      processedContent as TemplateComponent[]
+    );
+
+    // Debug output to help diagnose the issue
+    console.log(
+      "Sending email with attachments:",
+      attachments.map((a) => ({
+        contentId: a.contentId,
+        filename: a.filename,
+      }))
+    );
+
     const { data, error } = await resend.emails.send({
-      from: "place your from email here (no reply address)",
-      to: ["place your to email here"],
+      from: "ByteWard Solutions <no-reply@bytewardsolutions.co.uk>",
+      to: ["tmjward1997@gmail.com"],
       subject,
-      html,
+      html: updatedHtml,
+      attachments,
     });
 
     if (error) {

@@ -79,6 +79,26 @@ export const EmailTemplate: React.FC<EmailTemplateProps> = ({ content }) => (
               style={{ height: `${component.height}px` }}
             />
           );
+        case "image":
+          return (
+            <img
+              key={component.id}
+              src={component.src}
+              alt={component.alt || "Email image"}
+              width="100%"
+              height="auto"
+              style={{
+                width: "100%",
+                maxWidth: "600px",
+                height: "auto",
+                display: "block",
+                margin: "0 auto",
+                border: "0",
+                outline: "none",
+                textDecoration: "none",
+              }}
+            />
+          );
         default:
           return null;
       }

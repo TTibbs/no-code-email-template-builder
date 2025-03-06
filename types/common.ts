@@ -13,6 +13,7 @@ export type TemplateComponent = {
   link?: string;
   height?: number;
   src?: string | undefined;
+  alt?: string | undefined;
 };
 
 export type EmailTemplate = {
