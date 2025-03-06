@@ -9,12 +9,10 @@ import {
   updateComponentInTemplate,
   getTemplateById,
   saveTemplateToStorage,
-  createTemplate,
 } from "@/lib/template-utils";
-import ComponentList from "@/components/template/ComponentList";
 import ComponentRenderer from "@/components/template/ComponentRenderer";
 import { useDragAndDrop } from "@/hooks/use-drag-and-drop";
-import { Save, Send, Copy } from "lucide-react";
+import { EmailTemplateLayout } from "@/components/EmailTemplateLayout";
 
 export default function TemplatePage() {
   const params = useParams();
@@ -26,6 +24,7 @@ export default function TemplatePage() {
   const [activeTemplate, setActiveTemplate] = useState<EmailTemplate | null>(
     null
   );
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Available components for the builder
   const components: ComponentItem[] = [
@@ -53,45 +52,54 @@ export default function TemplatePage() {
     setActiveTemplate,
   });
 
-  // Load template from local storage
+  // Load template from local storage with simulated delay
   useEffect(() => {
-    try {
-      const id = parseInt(templateId);
+    const loadTemplate = async () => {
+      try {
+        const id = parseInt(templateId);
 
-      if (isNaN(id)) {
-        // Invalid ID format, redirect to home
+        if (isNaN(id)) {
+          // Invalid ID format, redirect to gallery
+          toast({
+            title: "Error",
+            description: "Invalid template ID",
+            variant: "destructive",
+          });
+          router.push("/templates/gallery");
+          return;
+        }
+
+        const template = getTemplateById(id);
+
+        // Simulate loading delay
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        if (template) {
+          // Template exists, use it
+          setActiveTemplate(template);
+        } else {
+          // Template doesn't exist, redirect to gallery
+          toast({
+            title: "Error",
+            description: "Template not found",
+            variant: "destructive",
+          });
+          router.push("/templates/gallery");
+        }
+      } catch (error) {
+        console.error("Error loading template:", error);
         toast({
           title: "Error",
-          description: "Invalid template ID",
+          description: "Failed to load template",
           variant: "destructive",
         });
-        router.push("/");
-        return;
+        router.push("/templates/gallery");
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      const template = getTemplateById(id);
-
-      if (template) {
-        // Template exists, use it
-        setActiveTemplate(template);
-      } else {
-        // Template doesn't exist, redirect to home
-        toast({
-          title: "Error",
-          description: "Template not found",
-          variant: "destructive",
-        });
-        router.push("/");
-      }
-    } catch (error) {
-      console.error("Error loading template:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load template",
-        variant: "destructive",
-      });
-      router.push("/");
-    }
+    loadTemplate();
   }, [templateId, router, toast]);
 
   // Remove component from the template
@@ -241,106 +249,95 @@ export default function TemplatePage() {
     });
 
     // Navigate to the new template
-    router.push(`/template/${newTemplate.id}`);
+    router.push(`/templates/${newTemplate.id}`);
   };
 
+  // Handle template updates
+  const handleUpdateTemplate = (updates: Partial<EmailTemplate>) => {
+    if (!activeTemplate) return;
+    setActiveTemplate({
+      ...activeTemplate,
+      ...updates,
+    });
+  };
+
+  // Show skeleton while loading
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-zinc-900">
+        <div className="flex flex-col h-screen">
+          {/* Action Buttons Skeleton */}
+          <div className="bg-zinc-800 border-b border-zinc-700 p-4 flex justify-between items-center animate-pulse">
+            <div className="flex items-center space-x-2">
+              <div className="h-8 w-8 bg-zinc-700 rounded-full"></div>
+              <div className="h-6 w-32 bg-zinc-700 rounded"></div>
+            </div>
+            <div className="flex space-x-2">
+              <div className="h-9 w-24 bg-zinc-700 rounded-md"></div>
+              <div className="h-9 w-24 bg-zinc-700 rounded-md"></div>
+              <div className="h-9 w-24 bg-emerald-700/30 rounded-md"></div>
+            </div>
+          </div>
+
+          {/* Main Content Skeleton */}
+          <div className="flex flex-1 overflow-hidden">
+            {/* Components Panel Skeleton */}
+            <div className="w-64 bg-zinc-800 border-r border-zinc-700 p-4 animate-pulse">
+              <div className="h-6 w-32 bg-zinc-700 rounded mb-4"></div>
+              <div className="space-y-3">
+                {components.map((_, i) => (
+                  <div key={i} className="h-12 bg-zinc-700 rounded-lg"></div>
+                ))}
+              </div>
+            </div>
+
+            {/* Email Editor Skeleton */}
+            <div className="flex-1 flex flex-col overflow-hidden animate-pulse">
+              {/* Template Name and Subject Editor Skeleton */}
+              <div className="p-4 border-b border-zinc-700 bg-zinc-800">
+                <div className="h-8 w-64 bg-zinc-700 rounded mb-3"></div>
+                <div className="h-6 w-full max-w-md bg-zinc-700 rounded"></div>
+              </div>
+
+              {/* Email Body Editor Skeleton */}
+              <div className="flex-1 p-6 bg-zinc-900 overflow-auto">
+                <div className="max-w-2xl mx-auto bg-white rounded-lg p-6 space-y-6">
+                  <div className="h-10 bg-zinc-200 rounded-md w-3/4 mx-auto"></div>
+                  <div className="h-24 bg-zinc-200 rounded-md"></div>
+                  <div className="h-12 bg-zinc-200 rounded-md w-1/2 mx-auto"></div>
+                  <div className="h-24 bg-zinc-200 rounded-md"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!activeTemplate) {
-    return <div className="p-8 text-center">Loading template...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-zinc-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+      </div>
+    );
   }
 
   return (
-    <div className="flex-1 flex flex-col">
-      {/* Action Buttons */}
-      <div className="bg-white border-b border-gray-200 p-2 flex justify-end">
-        <div className="flex gap-2">
-          <button
-            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
-            onClick={handleDuplicateTemplate}
-          >
-            <Copy size={16} />
-            Duplicate
-          </button>
-          <button
-            className="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
-            onClick={sendTestEmail}
-            disabled={isSubmitting}
-          >
-            <Send size={16} />
-            {isSubmitting ? "Sending..." : "Send Test"}
-          </button>
-          <button
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
-            onClick={saveTemplate}
-          >
-            <Save size={16} />
-            Save
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Components Panel */}
-        <ComponentList
-          components={components}
-          onDragStart={handleComponentDragStart}
-          onDragEnd={handleDragEnd}
-        />
-
-        {/* Email Editor */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Template Name and Subject Editor */}
-          <div className="bg-white border-b border-gray-200 p-4">
-            <div className="max-w-xl mx-auto space-y-4">
-              <div className="flex justify-between items-center">
-                <div className="flex-1">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Template Name
-                  </label>
-                  <input
-                    className="w-full p-2 border border-gray-300 rounded"
-                    value={activeTemplate?.name || ""}
-                    onChange={(e) =>
-                      activeTemplate &&
-                      setActiveTemplate({
-                        ...activeTemplate,
-                        name: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Subject Line
-                </label>
-                <input
-                  className="w-full p-2 border border-gray-300 rounded"
-                  value={activeTemplate?.subject || ""}
-                  onChange={(e) =>
-                    activeTemplate &&
-                    setActiveTemplate({
-                      ...activeTemplate,
-                      subject: e.target.value,
-                    })
-                  }
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Email Body Editor */}
-          <div
-            className="flex-1 overflow-y-auto p-6 bg-gray-100"
-            onDragOver={handleTemplateAreaDragOver}
-            onDrop={handleDrop}
-          >
-            <div className="max-w-xl mx-auto bg-white rounded-lg shadow-sm p-6 min-h-full">
-              {renderEmailPreview()}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <EmailTemplateLayout
+      template={activeTemplate}
+      isSubmitting={isSubmitting}
+      components={components}
+      onDuplicate={handleDuplicateTemplate}
+      onSendTest={sendTestEmail}
+      onSave={saveTemplate}
+      onUpdateTemplate={handleUpdateTemplate}
+      onComponentDragStart={handleComponentDragStart}
+      onDragEnd={handleDragEnd}
+      onTemplateAreaDragOver={handleTemplateAreaDragOver}
+      onDrop={handleDrop}
+    >
+      {renderEmailPreview()}
+    </EmailTemplateLayout>
   );
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { AlignLeft, AlignCenter, AlignRight, X } from "lucide-react";
 import { ComponentRendererProps } from "@/types";
 
@@ -16,6 +16,22 @@ const ComponentRenderer: React.FC<ComponentRendererProps> = ({
   onDragEnd,
   onDrop,
 }) => {
+  // State to hold the uploaded image source
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string | null;
+        setImageSrc(result);
+        onUpdate(component.id, { ...component, src: result || undefined });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div key={component.id}>
       {showDropBefore && (
@@ -34,9 +50,9 @@ const ComponentRenderer: React.FC<ComponentRendererProps> = ({
         onDragEnd={onDragEnd}
         onDrop={onDrop}
       >
-        {/* Remove Button - Always visible */}
+        {/* Remove Button - Initially hidden, visible on hover */}
         <button
-          className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full p-1 shadow hover:bg-red-600 z-20"
+          className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full p-1 shadow hover:bg-red-600 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             onRemove(component.id);
@@ -147,7 +163,16 @@ const ComponentRenderer: React.FC<ComponentRendererProps> = ({
           {component.type === "image" && (
             <div className={`text-${component.align}`}>
               <div className="bg-gray-100 p-8 flex items-center justify-center text-gray-500">
-                <span>Image Placeholder</span>
+                {imageSrc ? (
+                  <img src={imageSrc} alt="Uploaded" className="max-w-full" />
+                ) : (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="cursor-pointer"
+                  />
+                )}
               </div>
             </div>
           )}

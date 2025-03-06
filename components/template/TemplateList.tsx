@@ -1,23 +1,21 @@
 import React from "react";
-import { Trash2, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 import { TemplateListProps } from "@/types";
 import { EmailTemplate } from "@/types";
 
 const TemplateList: React.FC<TemplateListProps> = ({
   templates,
   onSelectTemplate,
-  onCreateTemplate,
   onDeleteTemplate,
 }) => {
   return (
-    <div className="p-6 bg-gray-50 flex-1">
-      <div className="max-w-4xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="p-6 border-4 border-emerald-600 rounded-lg flex-1">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
           {templates.map((template: EmailTemplate) => (
             <div
               key={template.id}
-              className="bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md cursor-pointer relative group"
+              className="bg-zinc-800 p-6 rounded-lg border border-zinc-700 hover:shadow-md cursor-pointer relative group space-y-2"
               onClick={() => onSelectTemplate(template)}
             >
               <button

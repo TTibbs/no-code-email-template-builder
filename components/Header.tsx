@@ -64,31 +64,33 @@ export default function Header({
   };
 
   return (
-    <div className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+    <div className="bg-zinc-800 border-b border-zinc-700 p-4 flex justify-between items-center">
       <div className="flex items-center">
-        <h1 className="text-xl font-semibold">Email Template Builder</h1>
+        <h1 className="text-xl font-semibold text-zinc-300">
+          Email Template Builder
+        </h1>
         {!showTemplateList && activeTemplate && (
-          <span className="ml-2 text-gray-500"> / {activeTemplate.name}</span>
+          <span className="ml-2 text-zinc-300"> / {activeTemplate.name}</span>
         )}
       </div>
       {!showTemplateList && activeTemplate && (
         <div className="flex gap-2">
           <button
-            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
+            className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
             onClick={onShowTemplateList}
           >
             <FileText size={16} />
             Templates
           </button>
           <button
-            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
+            className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
             onClick={handleViewAllTemplates}
           >
             <Grid size={16} />
             View All
           </button>
           <button
-            className="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
+            className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
             onClick={handleSendTestEmail}
             disabled={isSubmitting}
           >
@@ -96,7 +98,7 @@ export default function Header({
             {isSubmitting ? "Sending..." : "Send Test"}
           </button>
           <button
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
+            className="px-4 py-2 bg-emerald-500 hover:bg-emerald-700 text-white rounded text-sm font-medium flex items-center gap-1 cursor-pointer"
             onClick={handleSaveTemplate}
           >
             <Save size={16} />

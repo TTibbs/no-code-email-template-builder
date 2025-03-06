@@ -148,8 +148,8 @@ const EmailTemplateBuilder: React.FC = () => {
 
   // Main render
   return (
-    <div className="flex-1 flex flex-col">
-      <div className="p-6 bg-gray-50 flex-1">
+    <div className="flex flex-col">
+      <div className="p-6">
         <div className="max-w-4xl mx-auto">
           <TemplateList
             templates={templates}

@@ -1,166 +1,134 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { User } from "@/types";
-import { useToast } from "@/hooks/use-toast";
-import { getMockUsers } from "@/lib/cookie-utils";
-import { useAuth } from "@/contexts/AuthContext";
+import React from "react";
+import Link from "next/link";
+import { ArrowRight, Github, UserRound } from "lucide-react";
+import FallingText from "@/components/ui/FallingText";
+import { Button } from "@/components/ui/button";
+import { LinkPreview } from "@/components/ui/link-preview";
 
 export default function ProfilePage() {
-  const router = useRouter();
-  const { toast } = useToast();
-  const { user, isLoading, login, logout } = useAuth();
-  const [allUsers, setAllUsers] = useState<User[]>([]);
-
-  // Load all users for the demo
-  useEffect(() => {
-    setAllUsers(getMockUsers());
-  }, []);
-
-  // Handle user selection (for demo purposes)
-  const handleSelectUser = (userId: string): void => {
-    login(userId);
-    // The redirect is handled in the login function
-  };
-
-  // Handle logout
-  const handleLogout = (): void => {
-    logout();
-    // The redirect is handled in the logout function
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-2xl font-bold mb-6">User Profile</h1>
+    <main className="bg-zinc-800 min-h-screen font-sans">
+      {/* Header Section */}
+      <section className="bg-gradient-to-r from-zinc-100 to-zinc-200 p-8 md:p-16 rounded-bl-4xl rounded-br-4xl flex flex-col items-center justify-center h-[40vh] relative overflow-hidden shadow-xl">
+        <div className="w-14 h-14 bg-zinc-700 rounded-full p-2 flex items-center justify-center mb-6">
+          <UserRound size={40} className="text-zinc-400" />
+        </div>
+        <FallingText
+          text="Profile System Coming Soon! This feature will be implemented based on user demand."
+          highlightWords={[
+            "Profile",
+            "System",
+            "Coming",
+            "Soon",
+            "implemented",
+            "user",
+            "demand",
+          ]}
+          trigger="click"
+          backgroundColor="transparent"
+          wireframes={false}
+          gravity={0.3}
+          fontSize="1.8rem"
+          mouseConstraintStiffness={0.3}
+        />
+      </section>
 
-      {user ? (
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
-                {user.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </div>
-              <div className="ml-4">
-                <h2 className="text-xl font-semibold">{user.name}</h2>
-                <p className="text-gray-600">{user.email}</p>
-                <div className="flex flex-wrap gap-2 mt-1">
-                  <span className="inline-block px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                    {user.role}
-                  </span>
-                  <span className="inline-block px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                    Current User
-                  </span>
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium"
-            >
-              Sign Out
-            </button>
-          </div>
+      {/* Main Content */}
+      <section className="px-4 md:px-16 py-8">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-zinc-900 p-10 rounded-xl border border-zinc-700 text-center mb-8">
+            <h2 className="text-2xl font-bold text-white mb-4">
+              Profile System Not Yet Implemented
+            </h2>
+            <p className="text-zinc-400 mb-8 max-w-md mx-auto">
+              We're focusing on core email template functionality first. If
+              you'd like to see a profile system with user authentication and
+              backend storage, please let us know on GitHub.
+            </p>
 
-          <div className="border-t border-gray-200 pt-4">
-            <h3 className="text-lg font-medium mb-3">Account Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-500">User ID</p>
-                <p className="font-medium">{user.id}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Created At</p>
-                <p className="font-medium">
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Theme Preference</p>
-                <p className="font-medium capitalize">
-                  {user.preferences?.theme || "Default"}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Email Notifications</p>
-                <p className="font-medium">
-                  {user.preferences?.emailNotifications !== undefined
-                    ? user.preferences.emailNotifications
-                      ? "Enabled"
-                      : "Disabled"
-                    : "Not set"}
-                </p>
-              </div>
+            <div className="flex flex-col md:flex-row gap-4 justify-center">
+              <Link
+                href="https://github.com/TTibbs/no-code-email-template-builder/issues"
+                target="_blank"
+              >
+                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg shadow-md transition-colors flex items-center justify-center cursor-pointer">
+                  <Github size={18} className="mr-2" />
+                  Request on GitHub
+                </Button>
+              </Link>
+
+              <Link href="/templates/gallery">
+                <Button
+                  variant="outline"
+                  className="bg-zinc-600 text-zinc-100 hover:bg-zinc-700 hover:text-zinc-200 px-6 py-3 rounded-lg shadow-md transition-colors flex items-center justify-center cursor-pointer"
+                >
+                  <ArrowRight size={18} className="mr-2" />
+                  Browse Templates
+                </Button>
+              </Link>
             </div>
           </div>
 
-          <div className="mt-6 flex justify-center">
-            <button
-              onClick={() => router.push(`/profile/${user.id}`)}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium"
-            >
-              View Detailed Profile
-            </button>
+          <div className="bg-zinc-900 p-8 rounded-xl border border-zinc-700">
+            <h3 className="text-xl font-bold text-white mb-4">
+              What Would You Like to See?
+            </h3>
+            <p className="text-zinc-400 mb-6">
+              We're considering adding the following features to the profile
+              system:
+            </p>
+
+            <ul className="space-y-3 mb-8">
+              <li className="flex items-start">
+                <div className="bg-zinc-800 p-2 rounded-full mr-3 mt-1">
+                  <ArrowRight size={14} className="text-emerald-400" />
+                </div>
+                <span className="text-zinc-300">
+                  User authentication with email/password or OAuth
+                </span>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-zinc-800 p-2 rounded-full mr-3 mt-1">
+                  <ArrowRight size={14} className="text-emerald-400" />
+                </div>
+                <span className="text-zinc-300">
+                  Saved templates library with cloud storage
+                </span>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-zinc-800 p-2 rounded-full mr-3 mt-1">
+                  <ArrowRight size={14} className="text-emerald-400" />
+                </div>
+                <span className="text-zinc-300">
+                  Team collaboration features
+                </span>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-zinc-800 p-2 rounded-full mr-3 mt-1">
+                  <ArrowRight size={14} className="text-emerald-400" />
+                </div>
+                <span className="text-zinc-300">
+                  Usage analytics and template performance metrics
+                </span>
+              </li>
+            </ul>
+
+            <div className="mt-6 text-center">
+              <span className="block text-base text-zinc-400">
+                Have other ideas? Let us know on{" "}
+                <LinkPreview
+                  url="https://github.com/TTibbs/no-code-email-template-builder/issues"
+                  className="text-emerald-500"
+                >
+                  GitHub
+                </LinkPreview>
+              </span>
+            </div>
           </div>
         </div>
-      ) : (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8">
-          <p className="text-yellow-800">
-            No user is currently logged in. Select a user below to continue.
-          </p>
-        </div>
-      )}
-
-      {/* User Selector (for demo purposes) */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-medium mb-4">Select User (Demo)</h3>
-        <p className="text-sm text-gray-500 mb-4">
-          Since this is a demo without a real authentication system, you can
-          select a user to log in as.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {allUsers.map((mockUser) => (
-            <div
-              key={mockUser.id}
-              className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                user?.id === mockUser.id
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-200 hover:border-blue-300 hover:bg-blue-50"
-              }`}
-              onClick={() => handleSelectUser(mockUser.id)}
-            >
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                  {mockUser.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </div>
-                <div className="ml-3">
-                  <p className="font-medium">{mockUser.name}</p>
-                  <p className="text-xs text-gray-500">{mockUser.email}</p>
-                  {user?.id === mockUser.id && (
-                    <span className="inline-block px-2 py-0.5 text-xs rounded-full mt-1 bg-green-100 text-green-800">
-                      Current
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

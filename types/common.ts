@@ -12,6 +12,7 @@ export type TemplateComponent = {
   bgColor?: string;
   link?: string;
   height?: number;
+  src?: string | undefined;
 };
 
 export type EmailTemplate = {

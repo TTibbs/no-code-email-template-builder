@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import GlobalHeader from "@/components/GlobalHeader";
+import Footer from "@/components/Footer";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Analytics } from "@vercel/analytics/react";
 
@@ -19,14 +20,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} min-h-screen flex flex-col`}>
+    <html lang="en" className="h-full">
+      <body className={`${inter.className} flex flex-col min-h-screen`}>
         <AuthProvider>
           <GlobalHeader />
           <main className="flex-1 flex flex-col">{children}</main>
           <Toaster />
         </AuthProvider>
         <Analytics />
+        <Footer />
       </body>
     </html>
   );
