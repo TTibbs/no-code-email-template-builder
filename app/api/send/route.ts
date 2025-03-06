@@ -92,8 +92,8 @@ export async function POST(request: NextRequest) {
     );
 
     const { data, error } = await resend.emails.send({
-      from: "ByteWard Solutions <no-reply@bytewardsolutions.co.uk>",
-      to: ["tmjward1997@gmail.com"],
+      from: "Place your no-reply email here",
+      to: ["Place your to email here"],
       subject,
       html: updatedHtml,
       attachments,
