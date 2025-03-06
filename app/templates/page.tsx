@@ -160,7 +160,7 @@ export default function TemplatesPage() {
   return (
     <main className="bg-zinc-800 min-h-screen font-sans">
       {/* Header Section */}
-      <section className="bg-gradient-to-r from-zinc-100 to-zinc-200 p-8 md:p-16 rounded-bl-4xl rounded-br-4xl flex flex-col items-center justify-center h-[30vh] relative overflow-hidden shadow-xl">
+      <section className="bg-gradient-to-r from-zinc-100 to-zinc-200 p-8 md:p-16 rounded-bl-4xl rounded-br-4xl flex flex-col items-center justify-center h-[35vh] md:h-[40vh] lg:h-[45vh] relative overflow-hidden shadow-xl">
         <FallingText
           text={`Manage your email templates. Browse the gallery to find templates, then edit or duplicate them for your campaigns.`}
           highlightWords={[

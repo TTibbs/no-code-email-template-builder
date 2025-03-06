@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, Github, UserRound } from "lucide-react";
+import { ArrowRight, Github } from "lucide-react";
 import FallingText from "@/components/ui/FallingText";
 import { Button } from "@/components/ui/button";
 import { LinkPreview } from "@/components/ui/link-preview";
@@ -11,10 +11,7 @@ export default function ProfilePage() {
   return (
     <main className="bg-zinc-800 min-h-screen font-sans">
       {/* Header Section */}
-      <section className="bg-gradient-to-r from-zinc-100 to-zinc-200 p-8 md:p-16 rounded-bl-4xl rounded-br-4xl flex flex-col items-center justify-center h-[40vh] relative overflow-hidden shadow-xl">
-        <div className="w-14 h-14 bg-zinc-700 rounded-full p-2 flex items-center justify-center mb-6">
-          <UserRound size={40} className="text-zinc-400" />
-        </div>
+      <section className="bg-gradient-to-r from-zinc-100 to-zinc-200 p-8 md:p-16 rounded-bl-4xl rounded-br-4xl flex flex-col items-center justify-center h-[35vh] md:h-[40vh] relative overflow-hidden shadow-xl">
         <FallingText
           text="Profile System Coming Soon! This feature will be implemented based on user demand."
           highlightWords={[

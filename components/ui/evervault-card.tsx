@@ -30,10 +30,36 @@ export const EvervaultCard = ({
     setRandomString(str);
   }
 
+  // Add a style element to ensure text is not selectable
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .transparent-selection, .transparent-selection * {
+        -webkit-tap-highlight-color: transparent !important;
+      }
+      
+      .transparent-selection::selection,
+      .transparent-selection *::selection {
+        background-color: transparent !important;
+        color: inherit !important;
+      }
+      
+      .transparent-selection::-moz-selection,
+      .transparent-selection *::-moz-selection {
+        background-color: transparent !important;
+        color: inherit !important;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   return (
     <div
       className={cn(
-        "p-0.5  bg-transparent aspect-square  flex items-center justify-center w-full h-full relative",
+        "p-0.5 bg-transparent aspect-square flex items-center justify-center w-full h-full relative transparent-selection",
         className
       )}
     >
@@ -47,7 +73,7 @@ export const EvervaultCard = ({
           randomString={randomString}
         />
         <div className="relative z-10 flex items-center justify-center">
-          <div className="relative h-44 w-44  rounded-full flex items-center justify-center text-white font-bold text-xl">
+          <div className="relative h-44 w-44 rounded-full flex items-center justify-center text-white font-bold text-xl">
             <div className="absolute w-full h-full bg-black/[0.8] blur-sm rounded-full" />
             <span className="text-zinc-100 z-20">{text}</span>
           </div>
@@ -62,17 +88,20 @@ export function CardPattern({ mouseX, mouseY, randomString }: any) {
   let style = { maskImage, WebkitMaskImage: maskImage };
 
   return (
-    <div className="pointer-events-none">
-      <div className="absolute inset-0 rounded-2xl  [mask-image:linear-gradient(white,transparent)] group-hover/card:opacity-50"></div>
+    <div
+      className="pointer-events-none select-none"
+      style={{ userSelect: "none" }}
+    >
+      <div className="absolute inset-0 rounded-2xl [mask-image:linear-gradient(white,transparent)] group-hover/card:opacity-50 select-none"></div>
       <motion.div
-        className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-500 to-blue-700 opacity-0  group-hover/card:opacity-100 backdrop-blur-xl transition duration-500"
+        className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-500 to-blue-700 opacity-0 group-hover/card:opacity-100 backdrop-blur-xl transition duration-500 select-none"
         style={style}
       />
       <motion.div
-        className="absolute inset-0 rounded-2xl opacity-0 mix-blend-overlay  group-hover/card:opacity-100"
+        className="absolute inset-0 rounded-2xl opacity-0 mix-blend-overlay group-hover/card:opacity-100 select-none"
         style={style}
       >
-        <p className="absolute inset-x-0 text-xs h-full break-words whitespace-pre-wrap text-white font-mono font-bold transition duration-500">
+        <p className="absolute inset-x-0 text-xs h-full break-words whitespace-pre-wrap text-white font-mono font-bold transition duration-500 select-none">
           {randomString}
         </p>
       </motion.div>
