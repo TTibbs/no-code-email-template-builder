@@ -20,6 +20,7 @@ type LinkPreviewProps = {
   height?: number;
   quality?: number;
   layout?: string;
+  target?: string;
 } & (
   | { isStatic: true; imageSrc: string }
   | { isStatic?: false; imageSrc?: never }
@@ -35,6 +36,7 @@ export const LinkPreview = ({
   layout = "fixed",
   isStatic = false,
   imageSrc = "",
+  target = "_blank",
 }: LinkPreviewProps) => {
   let src;
   if (!isStatic) {
@@ -101,6 +103,7 @@ export const LinkPreview = ({
           onMouseMove={handleMouseMove}
           className={cn("text-black dark:text-white", className)}
           href={url}
+          target={target}
         >
           {children}
         </HoverCardPrimitive.Trigger>

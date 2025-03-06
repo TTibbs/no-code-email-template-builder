@@ -183,8 +183,9 @@ export default function TemplatesPage() {
           <span className="block text-base">
             Want me removed from this page? Bug me on{" "}
             <LinkPreview
-              url="https://github.com/TTibbs/no-code-email-template-builder/issues"
+              url="https://github.com/TTibbs/no-code-email-template-builder/issues/new?template=BLANK_ISSUE"
               className="text-emerald-500"
+              target="_blank"
             >
               GitHub
             </LinkPreview>

@@ -45,9 +45,9 @@ export default function ProfilePage() {
               backend storage, please let us know on GitHub.
             </p>
 
-            <div className="flex flex-col md:flex-row gap-4 justify-center">
+            <div className="flex flex-col items-center md:flex-row gap-4 justify-center">
               <Link
-                href="https://github.com/TTibbs/no-code-email-template-builder/issues"
+                href="https://github.com/TTibbs/no-code-email-template-builder/issues/new?template=BLANK_ISSUE"
                 target="_blank"
               >
                 <Button className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg shadow-md transition-colors flex items-center justify-center cursor-pointer">
